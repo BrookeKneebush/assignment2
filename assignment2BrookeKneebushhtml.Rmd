@@ -9,17 +9,18 @@ output: html_document
 
 knitr::opts_chunk$set(echo = TRUE)
 
+```
+
+```{r}
+
 library(tidyverse)
 library(randomForest)
 library(skimr)
 library(broom)
-install.packages("widyr")
 library(widyr)
-install.packages("broom.mixed")
-library(broom.mixed)
-install.packages("Rtools")
 
 ```
+
 
 ```{r}
 
