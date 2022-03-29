@@ -315,17 +315,27 @@ knitr:: kable(Thanksgiving_Meals_New%>%pairwise_cor(value, id, sort = TRUE))
 ### 13. Use `lm()` or randomForest() function to build a model that predict a family income based on data in the dataset.
 
 ## 13.a ModelA
+Don't need to convert random forest to factor - otherwise all good.
 ```{r}
 
 Thanksgiving_Meals_LMfct<-Thanksgiving_Meals%>%mutate(family_income=as_factor(family_income), main_dish=as_factor(main_dish), cranberry=as_factor(cranberry), pie3=as_factor(pie3), work_retail=as_factor(work_retail), community_type=as_factor(community_type))
 
-ModelA<-randomForest(family_income~ work_retail, data = Thanksgiving_Meals_LMfct,importance=TRUE, na.action=na.omit)
+ModelA<-randomForest(family_income~ work_retail, data = Thanksgiving_Meals_LMfct,importance=TRUE, proximity=TRUE, na.action=na.omit)
 
 ModelAA<-lm(family_income~work_retail, data = Thanksgiving_Meals_LMfct)
 
 print(ModelA)
 
 summary(ModelA)
+
+Thanksgiving_Meals_lm<-Thanksgiving_Meals%>%mutate(
+family_income_number=parse_number(family_income),age_number=parse_number(age))
+
+Thanksgiving_Meals_lm<-Thanksgiving_Meals_lm%>%filter(!is.na(family_income_number) & !is.na(age_number))
+
+ModelAA<-lm(family_income_number~age_number, data = Thanksgiving_Meals_lm)
+
+summary(ModelAA)
 
 tidy(ModelAA)
 
@@ -334,7 +344,9 @@ tidy(ModelAA)
 ## 13.b ModelB
 ```{r}
 
-ModelB<-randomForest(family_income~ work_retail + community_type +main_dish, importance=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+ModelB<-randomForest(family_income~ work_retail + community_type +main_dish, importance=TRUE, proximity=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+
+Thanksgiving_Meals_fct<-Thanksgiving_Meals_fct%>%filter(!is.na(work_retail) & !is.na(community_type) & !is.na(main_dish))
 
 ModelBB<-lm(family_income~work_retail + community_type + main_dish, data = Thanksgiving_Meals_LMfct)
 
@@ -350,7 +362,9 @@ tidy(ModelBB)
 ## 13.c ModelC
 ```{r}
 
-ModelC<-randomForest(family_income~ work_retail + main_dish + cranberry + pie3, importance=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+ModelC<-randomForest(family_income~ work_retail + main_dish + cranberry + pie3, importance=TRUE, proximity=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+
+Thanksgiving_Meals_fct<-Thanksgiving_Meals_fct%>%filter(!is.na(cranberry) & !is.na(pie3))
 
 ModelCC<-lm(family_income~work_retail + main_dish + cranberry, data = Thanksgiving_Meals_LMfct)
 
@@ -362,8 +376,6 @@ tidy(ModelCC)
 
 ```
 
-
-
 ### Compare 3 models using different set of input variables. Use different number of variables.
 
 ## 3 models were compared using sets of input variables with different numbers of variables.  Both randomForest and lm (to fit Linear Models), although the pie3 variable could not be used in Model CC because contrasts can be applied only to factors with 2 or more levels.
@@ -372,7 +384,7 @@ tidy(ModelCC)
 ## The variables were selected for the following reasons:  work_retail - it is likely that workers in the retail industry will have a relatively low income compared to other industries, community_type - it is highly possible that certain types of communities could be predictors of income eg.urban dwellers may be more likely to have a higher income than rural dwellers.  main_dish, cranberry and pie3 were chosen for the reasons given in Question 2: It may be possible to predict family income based on the assumption that families with higher income could afford to purchase the more expensive main_dishes such as Turducken, Ham/Pork and Roast beef, whilst those with lower income may purchase the least expensive Main_dishes such as Tofurkey and Chicken.  The cranberry and pie3 variables could also be useful in predicting family income, as homemade cranberry would be more expensive than canned and cherries are expensive, assuming that families with higher income would choose more expensive options.
 
 ### Write 2 sentences explaining which model is best.
-## ModelC / ModelCC is the best because the OOB estimate of  error rate is the lowest: 79.09% and tidy(ModelCC) provides estimates closer to 1.
+## ModelC / ModelCC is the best because the OOB estimate of  error rate is the lowest: 80.91% and tidy(ModelCC) provides estimates closer to 1.
 
 
 
