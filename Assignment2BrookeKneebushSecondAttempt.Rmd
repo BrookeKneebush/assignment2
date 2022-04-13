@@ -1,0 +1,21 @@
+---
+title: "Assessment2SecondAttempt"
+author: "BrookeKneebush"
+date: '2022-04-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(randomForest)
+library(skimr)
+library(broom)
+install.packages("widyr")
+library(widyr)
+install.packages("broom.mixed")
+library(broom.mixed)
+
+```
+
