@@ -12,10 +12,41 @@ library(tidyverse)
 library(randomForest)
 library(skimr)
 library(broom)
-install.packages("widyr")
 library(widyr)
-install.packages("broom.mixed")
 library(broom.mixed)
 
 ```
 
+```{r}
+
+Thanksgiving_Meals<-read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-11-20/thanksgiving_meals.csv'
+)
+
+```
+
+## *Brooke Kneebush*
+*** 
+## **S3032877**
+*** 
+# Assignment 2
+*** 
+
+### Part 1:  formatting RMarkdown document
+
+### 1. Create an Rmarkdown document with webpage as output (same as in setup)
+
+### At the start of the output document include your name in italic font and your student id in bold font as level 2 heading 
+
+### Separate with a solid line 
+
+### Include the title “Assignment 2” as level 1 heading 
+
+### Separate with a solid line 
+
+### List all tasks in the assignment as headings of the third level and include your results (=output) below each task showing your R code. 
+
+### Part 2: Data Wrangling and visualization
+
+### For all tables below, you need to use the RMarkdown functionality to present tables (`kable`).
+
+### 1. Display the first 10 rows of the dataset using `kable()` function (1 marks). 
