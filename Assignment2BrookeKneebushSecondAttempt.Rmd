@@ -50,3 +50,311 @@ Thanksgiving_Meals<-read_csv('https://raw.githubusercontent.com/rfordatascience/
 ### For all tables below, you need to use the RMarkdown functionality to present tables (`kable`).
 
 ### 1. Display the first 10 rows of the dataset using `kable()` function (1 marks). 
+
+```{r}
+
+knitr:: kable(Thanksgiving_Meals[1:10,1:65]) 
+
+```
+
+### 2. Using `skim()` display the summary of variables.
+
+```{r}
+
+skim(Thanksgiving_Meals)
+
+```
+
+### Think about the task to predict a family income based on their menu: what variables may be useful? Are all of them correct type? Write 2-3 sentences with your explanation. (2 marks)
+
+## Based on online research for the USA, the choice of main_dish could predict a family income, with it being likely that the most expensive choice would be Turducken (given that three meats are required), followed in price by Ham/Pork, Roast beef, Turkey, Chicken and finally, the most affordable main_dish would be Tofurkey.  It may be possible to predict family income based on the assumption that families with higher income could afford to purchase the more expensive main_dishes such as Turducken, Ham/Pork and Roast beef, whilst those with lower income may purchase the least expensive Main_dishes such as Tofurkey and Chicken.  The cranberry and pie3 variables could also be useful in predicting family income, as homemade cranberry would be more expensive than canned and cherries are expensive, assuming that families with higher income would choose more expensive options.
+
+## The main_dish, cranberry and pie3 variables are not correct type.  They are character type variables.  They need to be converted to factor type variables to analyse their ability to predict family income.  
+
+## Could run the following code to convert these variables to factors - but haven't done so as the question does not ask for this to be run.
+
+## Could also run the second Linear Model code below as an example to predict family_income based on main_dish and cranberry  - but haven't done so as the question does not ask for this to be run.
+
+Thanksgiving_Meals<-Thanksgiving_Meals%>%mutate(family_income=as_factor(family_income),main_dish=as_factor(main_dish), cranberry=as_factor(cranberry), pie3=as_factor(pie3)
+)
+
+lm(family_income~main_dish+cranberry, data=Thanksgiving_Meals)
+
+
+### Think about the task to predict a community type or US_region based on their menu: what variables may be useful? Are all of them correct type?
+
+## Based on the ABC Newspaper article "Here’s What Your Part Of America Eats On Thanksgiving," the following variables will likely be useful in predicting us_region as the map shows the most disproportionately common Thanksgiving side dishes by region: side3 (Cauliflower is most common in Middle Atlantic), side5 (Cornbread is most common in East South Central), side7 (Green beans/green bean casserole is most common in East North Central), side8 (Macaroni and cheese is most common in the South Atlantic), side10 (Roll/biscuits is most common in East North Central), side11 (Squash is most common in New England), side12 (Vegetable Salad is most common in Pacific and Mountain).
+
+## The side variables are not correct type.  They are character type variables.  They need to be converted to factor type variables.
+
+## Could run the following code to convert these variables to factors - but haven't done so as the question does not ask for this to be run.
+
+Thanksgiving_Meals<-Thanksgiving_Meals%>%mutate(us_region=as_factor(us_region),side3=as_factor(side3), side5=as_factor(side5), side7=as_factor(side7), side8=as_factor(side8), side10=as_factor(side10), side11=as_factor(side11), side12=as_factor(side12) 
+)
+
+
+### 3. Use `fct_reorder` and `parse_number` functions to create a factor variable `family_income`
+
+```{r}
+
+Thanksgiving_Meals_fct<-Thanksgiving_Meals%>%
+  mutate(family_income=fct_reorder(family_income, parse_number(family_income)))
+
+```
+
+### 4. What is the number of people who celebrate?
+## The number of people who celebrate Thanksgiving is 980.
+
+```{r}
+
+Thanksgiving_Meals%>%filter(celebrate=="Yes")%>%count(celebrate, sort=TRUE)
+
+knitr:: kable(Thanksgiving_Meals%>%filter(celebrate=="Yes")%>%count(celebrate, sort=TRUE)) 
+
+```
+
+### 5. What are categories and insights for each main dish served and the method it is prepared?
+## Using distinct function, I have determined that there are 9 different categories of main dish served.  But one category is "NA" (not applicable - 84 observations), one category is "I don't know" (5 observations) and another category is "Other (please specify - 35 observations)" - these observations are listed under the variable main_dish_other.  Using the count function, I have determined that Turkey was by far the most popular category of main dish served with 859 observations.  The least popular main dish served was Turducken with only 3 observations.  The second most popular main dish served was Ham/Pork with 29 observations.  There were 20 observations for Tofurkey, 12 for Chicken, 11 for Roast beef and 3 for Turducken.
+
+## Using the distinct function, I have determined that there are 6 different categories of main prep method for main dishes.  But one category is "NA" (not applicable - 84), one category is "I don't know" (17 observations) and another category is "Other (please specify - 51 observations)" these observations are listed under the variable main_prep_other.  Using the count function, I have determined that the most popular main prep method was Baked with 481 observations, with Roasted also quite popular with 378 observations.  There were 47 observations of Fried for the main prep method.
+
+## Using the filter function, I identified that, for main_dish Turkey, the most popular method of main_prep was Baked, with 422 observations, followed by 351 Roasted and 41 Fried.  For main_dish Ham/Pork the most popular method of main_prep was Baked, with 22 observations, followed by 5 Roasted and there were 0 observations Fried.  Also for Tofurkey there were 0 observations of Fried, the most popular method of main_prep was Baked with 14 observations, followed by 4 Roasted.  The popularity of Baked and Roasted was equal at 4 observations for Chicken, with 2 Fried.  Main_prep popularity was fairly evenly spread also for Roast beef, with 3 observations of Baked, 5 of Roasted and 2 of Fried. All 3 observations of Turducken used the Roasted method of Meal_prep
+
+```{r}
+
+main_dish<-Thanksgiving_Meals%>%
+  distinct(main_dish)
+
+Thanksgiving_Meals%>%count(main_dish, sort=TRUE)
+
+main_prep<-Thanksgiving_Meals%>%distinct(main_prep)
+
+Thanksgiving_Meals%>%count(main_prep, sort=TRUE)
+
+Thanksgiving_Meals%>%filter(main_dish=="Turkey" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Turkey" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Turkey" & main_prep=="Fried")
+
+Thanksgiving_Meals%>%filter(main_dish=="Ham/Pork" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Ham/Pork" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Ham/Pork" & main_prep=="Fried")
+
+Thanksgiving_Meals%>%filter(main_dish=="Tofurkey" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Tofurkey" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Tofurkey" & main_prep=="Fried")
+
+Thanksgiving_Meals%>%filter(main_dish=="Chicken" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Chicken" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Chicken" & main_prep=="Fried")
+
+Thanksgiving_Meals%>%filter(main_dish=="Roast beef" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Roast beef" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Roast beef" & main_prep=="Fried")
+
+Thanksgiving_Meals%>%filter(main_dish=="Turducken" & main_prep=="Baked")
+
+Thanksgiving_Meals%>%filter(main_dish=="Turducken" & main_prep=="Roasted")
+
+Thanksgiving_Meals%>%filter(main_dish=="Turducken" & main_prep=="Fried")
+
+knitr:: kable(Thanksgiving_Meals %>%
+count(main_dish, main_prep, sort = TRUE) %>%
+filter(!is.na(main_dish) & !is.na(main_prep)), "pipe")
+
+```
+
+### 6. Create 3 different data viz showing insights for main dish served and the method. Provide your own legend and use themes.  Write 2-3 sentences with your explanation of each insight.
+
+## 6.a
+## This visualisation shows the 3 methods of preparation for main_prep filtered in, so that "I don't know," Other (please specify) and NA don't clutter up the visualisation, with  Facet_wrap used to show the number of observations for each main dish within each variable of Baked, Fried and Roasted and Colours for each main dish option help to distinguish between them.
+## Baked Turkey is the most popular dish overall, with Roasted Turkey being second most popular followed by Fried Turkey.  Baked Ham/Pork was the next most popular, followed by Baked Other, and Baked Tofurkey, Baked main_prep was the most popular overall.
+
+```{r}
+
+Thanksgiving_Meals %>%
+filter(main_prep == "Baked" | main_prep == "Fried" | main_prep == "Roasted") %>%
+ggplot(aes(main_dish, fill = main_dish)) + geom_bar() + facet_wrap(vars(main_prep)) +
+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+```
+
+## 6.b
+## This visualisation shows all observations, including NA, other (Please specify) and I don't know for both main_dish and main_prep, with the popularity of preparation method identified by coloured outlines for each main_dish. It clearly shows that Turkey is the most popular dish and that Baked (orange) Turkey is the most popular overall, followed by Roased (pink) Turkey and Fried (Olive) Turkey and Baked (orange) Ham/Pork. The visualisation helps to show that Baked is the most popular preparation method.
+
+```{r}
+
+Thanksgiving_Meals%>% ggplot(aes(main_dish, colour=main_prep)) + geom_bar() +coord_flip()
+
+```
+
+## 6.c`
+## Facet wrap has been used to show Main_Dish types in this visualisation with the popularity of Turkey across all preparation methods clearly standing out.  Baked also shows through as the most popular food preparation method with Ham/Pork, Tofurkey, particularly noticeably popular.
+
+```{r}
+
+Thanksgiving_Meals%>%ggplot(aes(main_prep)) + geom_bar() + theme_classic() + facet_wrap(~ main_dish)+coord_flip() 
+
+```
+
+### 7. How many use cranberry sauce? How many use gravy? 2marks
+
+## Using the distinct function, I determined that there were three possible responses that indicate that respondents use cranberry sauce - "Homemade," "Canned" and "Other (please specify)".  Using the filter function, I determined that 502 respondents use Canned, 301 use Homemade and 25 use Other.  Therefore, in total 828 respondents use cranberry sauce.
+
+## Using the filter function, I determined that 892 respondents answered "Yes" to gravy.  Therefore, 892 respondents use gravy.
+
+```{r}
+
+cranberry<-Thanksgiving_Meals%>%
+  distinct(cranberry)
+
+Thanksgiving_Meals%>%filter(cranberry=="Homemade" |	 cranberry=="Canned" | cranberry=="Other (please specify)" )%>%count(cranberry, sort=TRUE)
+
+Thanksgiving_Meals%>%filter(gravy=="Yes")%>%count(gravy, sort=TRUE)
+
+knitr:: kable(Thanksgiving_Meals%>%filter(gravy=="Yes")%>%count(gravy, sort=TRUE))
+
+```
+
+### 8-9. What is the distribution of those who celebrate across income ranges. Create a data viz.  Write 2-3 sentences with your explanation of each insight.
+
+## Those who celebrate are most likely to fall within the family income range of $25,000 to $49,999 and those who celebrate are least likely to fall withing the range of 175,000 to 199,999 (the second highest income range), noting that, of the 980 respondents who celebrate, 118 responded “Prefer not to answer” (12%).  Surprisingly, 76 respondents fell within the $200,000 and up income range, being the highest and other than that outlier, the distribution fairly well resembles the expected bell curve.
+
+```{r}
+
+celebrate_income<-Thanksgiving_Meals%>%select(family_income, celebrate)
+
+celebrate_income_Yes<-celebrate_income%>%filter(celebrate=="Yes")
+
+celebrate_income_Yes%>%
+  count(family_income, sort=TRUE)
+
+celebrate_income_Yes<-celebrate_income_Yes%>%
+  mutate(family_income=fct_reorder(family_income, parse_number(family_income)))
+
+
+celebrate_income_Yes%>%ggplot(aes(family_income))+geom_bar()+coord_flip() 
+
+knitr:: kable(celebrate_income_Yes%>%
+  count(family_income, sort=TRUE))
+
+```
+
+### 10. Use the following code to create a new data set
+
+```{r}
+
+Thanksgiving_Meals_New<-Thanksgiving_Meals%>%select(id, starts_with("side"),
+         starts_with("pie"),
+         starts_with("dessert")) %>%
+  select(-side15, -pie13, -dessert12) %>%
+  gather(type, value, -id) %>%
+  filter(!is.na(value),
+         !value %in% c("None", "Other (please specify)")) %>%
+  mutate(type = str_remove(type, "\\d+"))
+
+knitr:: kable(Thanksgiving_Meals_New<-Thanksgiving_Meals%>%select(id, starts_with("side"),
+         starts_with("pie"),
+         starts_with("dessert")) %>%
+  select(-side15, -pie13, -dessert12) %>%
+  gather(type, value, -id) %>%
+  filter(!is.na(value),
+         !value %in% c("None", "Other (please specify)")) %>%
+  mutate(type = str_remove(type, "\\d+")))
+
+```
+
+### Write 2-3 sentences with your explanation of what it does.
+
+## A new dataset called "Thanksgiving_Meals_New" was created, labelled in the first column according to "id".  From the original dataset "Thanksgiving_Meals" all variables starting with "side", "pie" and "dessert" were selected to be included in the new dataset with three variables then removed from the dataset - "side15", "pie13" and "dessert12".  The remaining "side", "pie" and "dessert" variables were then gathered into one variable called "type."  "na" observations were removed and the variable "value" was then evaluated to determine if "None", "Other (please specify)" and if so, remove them.
+
+### 11-12. Intall package `widyr` and use `pairwise_cor()` function https://www.rdocumentation.org/packages/widyr/versions/0.1.3/topics/pairwise_cor 
+### Use this code for the new dataset
+
+```{r}
+
+Thanksgiving_Meals_New%>%pairwise_cor(value, id, sort = TRUE)
+
+knitr:: kable(Thanksgiving_Meals_New%>%pairwise_cor(value, id, sort = TRUE))
+
+```
+
+### Write 2-3 sentences with your explanation of what it does. 
+## Pairwise_cor finds correlations of pairs of items in a column, based on a "feature" column that links them together and expresses the size and direction of a relationship numerically.  In this case, the items are types of sides, pies and deserts, with those pairs with a positive correlation (a relationship between two variables in which both variables move in the same direction) listed first, descending to those with a negative correlation.  The closer the correltation is to 1.0, the stronger the relationship between the two variables, while  a correlation of 0.0 indicates the absence of a relationship and a negative correlation close to -1.0 represents a statistically significant negative relationship between pairs.    
+
+### Write 1 sentence with your explanation of what insights it shows. 
+## The three strongest positive relationships (more likely if one is selected that the other will be selected) identified in this example are between Cookies and Brownies (.41), Sweet Potato and Mac & Cheese (.36) and Rolls/Biscuits and Mashed Potato (.34), whilst the 3 strongest negative relationships (less likely if one is selected that the other will be selected) are between Peach Cobbler and Mashed Potato (.163), Sweet Potato and Pumpkin (.13) and Sweet Potato and Mashed Potato (.12).
+
+### 13. Use `lm()` or randomForest() function to build a model that predict a family income based on data in the dataset.
+
+## 13.a ModelA
+
+```{r}
+
+Thanksgiving_Meals_LMfct<-Thanksgiving_Meals%>%mutate(family_income=as_factor(family_income), main_dish=as_factor(main_dish), cranberry=as_factor(cranberry), pie3=as_factor(pie3), work_retail=as_factor(work_retail), community_type=as_factor(community_type))
+
+ModelA<-randomForest(family_income~ work_retail, data = Thanksgiving_Meals_LMfct,importance=TRUE, na.action=na.omit)
+
+ModelAA<-lm(family_income~work_retail, data = Thanksgiving_Meals_LMfct)
+
+print(ModelA)
+
+summary(ModelA)
+
+tidy(ModelAA)
+
+
+```
+
+## 13.b ModelB
+
+```{r}
+
+ModelB<-randomForest(family_income~ work_retail + community_type +main_dish, importance=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+
+ModelBB<-lm(family_income~work_retail + community_type + main_dish, data = Thanksgiving_Meals_LMfct)
+
+print(ModelB)
+
+summary(ModelB)
+
+tidy(ModelBB)
+
+
+```
+
+## 13.c ModelC
+
+```{r}
+
+ModelC<-randomForest(family_income~ work_retail + main_dish + cranberry + pie3, importance=TRUE, data = Thanksgiving_Meals_fct,na.action=na.omit)
+
+ModelCC<-lm(family_income~work_retail + main_dish + cranberry, data = Thanksgiving_Meals_LMfct)
+
+print(ModelC)
+
+summary(ModelC)
+
+tidy(ModelCC)
+
+```
+
+### Compare 3 models using different set of input variables. Use different number of variables.
+
+## 3 models were compared using sets of input variables with different numbers of variables.  Both randomForest and lm (to fit Linear Models), although the pie3 variable could not be used in Model CC because contrasts can be applied only to factors with 2 or more levels.
+
+### Explain your choice of variables (3 sentences)
+## The variables were selected for the following reasons:  work_retail - it is likely that workers in the retail industry will have a relatively low income compared to other industries, community_type - it is highly possible that certain types of communities could be predictors of income eg.urban dwellers may be more likely to have a higher income than rural dwellers.  main_dish, cranberry and pie3 were chosen for the reasons given in Question 2: It may be possible to predict family income based on the assumption that families with higher income could afford to purchase the more expensive main_dishes such as Turducken, Ham/Pork and Roast beef, whilst those with lower income may purchase the least expensive Main_dishes such as Tofurkey and Chicken.  The cranberry and pie3 variables could also be useful in predicting family income, as homemade cranberry would be more expensive than canned and cherries are expensive, assuming that families with higher income would choose more expensive options.
+
+### Write 2 sentences explaining which model is best.
+## ModelC / ModelCC is the best because the OOB estimate of  error rate is the lowest: 79.09% and tidy(ModelCC) provides estimates closer to 1.
+
