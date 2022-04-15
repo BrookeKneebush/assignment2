@@ -80,15 +80,10 @@ skim(Thanksgiving_Meals)
 
 ## Could also run the second Linear Model code below as an example to predict family_income based on main_dish and cranberry  - but haven't done so as the question does not ask for this to be run.
 
-```{r}
-
 Thanksgiving_Meals<-Thanksgiving_Meals%>%mutate(family_income=as_factor(family_income),main_dish=as_factor(main_dish), cranberry=as_factor(cranberry), pie3=as_factor(pie3)
 )
 
 lm(family_income~main_dish+cranberry, data=Thanksgiving_Meals)
-
-```
-
 
 ### Think about the task to predict a community type or US_region based on their menu: what variables may be useful? Are all of them correct type?
 
@@ -98,13 +93,8 @@ lm(family_income~main_dish+cranberry, data=Thanksgiving_Meals)
 
 ## Could run the following code to convert these variables to factors - but haven't done so as the question does not ask for this to be run.
 
-```{r}
-
 Thanksgiving_Meals<-Thanksgiving_Meals%>%mutate(us_region=as_factor(us_region),side3=as_factor(side3), side5=as_factor(side5), side7=as_factor(side7), side8=as_factor(side8), side10=as_factor(side10), side11=as_factor(side11), side12=as_factor(side12) 
 )
-
-```
-
 
 ### 3. Use `fct_reorder` and `parse_number` functions to create a factor variable `family_income`
 
